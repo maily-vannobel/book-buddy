@@ -1,17 +1,30 @@
 const bcrypt = require("bcrypt");
-const { User, registerSchema, loginSchema } = require("../model/usersModel");
+const { User, registerSchema, loginSchema } = require("../models/userSchema");
 const jwt = require("jsonwebtoken");
 
+// Fetch all users
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur du serveur", error });
+    }
+};
+
+// Register a new user
 exports.register = async (req, res) => {
     try {
         const { error } = registerSchema.validate(req.body);
         if (error) {
+            console.error("Validation error:", error.details[0].message);
             return res.status(400).json({ message: error.details[0].message });
         }
 
-        const { username, password, email } = req.body;
+        const { username, email, password } = req.body;
         const existingUser = await User.findOne({ username });
         if (existingUser) {
+            console.error("Username already taken:", username);
             return res
                 .status(400)
                 .json({ message: "Nom d'utilisateur déjà pris" });
@@ -25,13 +38,17 @@ exports.register = async (req, res) => {
         });
 
         await newUser.save();
-
-        res.status(201).json({ message: "Utilisateur créé avec succès" });
+        console.log("Enregistrement réussi");
+        return res
+            .status(201)
+            .json({ message: "Utilisateur créé avec succès" });
     } catch (error) {
-        res.status(500).json({ message: "Erreur du serveur", error });
+        console.error("Server error during registration:", error);
+        return res.status(500).json({ message: "Erreur du serveur", error });
     }
 };
 
+// Login a user
 exports.login = async (req, res) => {
     try {
         const { error } = loginSchema.validate(req.body);
@@ -58,12 +75,13 @@ exports.login = async (req, res) => {
             expiresIn: "1h",
         });
 
-        res.status(200).json({ token, message: "Connexion réussie" });
+        return res.status(200).json({ token, message: "Connexion réussie" });
     } catch (error) {
         res.status(500).json({ message: "Erreur du serveur", error });
     }
 };
 
+// Update user password
 exports.updatePassword = async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
@@ -100,17 +118,19 @@ exports.updatePassword = async (req, res) => {
         res.status(500).json({ message: "Erreur du serveur", error });
     }
 };
+
+// Get user info
 exports.getUserInfo = async (req, res) => {
     try {
-        const userInfo = req.body;
+        const userId = req.user.id;
 
-        const user = await User.findById(userInfo);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Utilisateur non trouvé" });
         }
         res.status(200).send(user);
     } catch (error) {
-        console.log("Utilisateur non trouvé");
+        console.error("Utilisateur non trouvé:", error);
         res.status(404).json({ message: "Utilisateur non trouvé" });
     }
 };
