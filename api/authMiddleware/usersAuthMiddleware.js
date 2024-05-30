@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
+    // Récupère token depuis l'en-tête Authorization
     const token =
         req.header("Authorization") &&
         req.header("Authorization").replace("Bearer ", "");
