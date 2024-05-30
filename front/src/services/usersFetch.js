@@ -19,56 +19,47 @@ async function fetchWithAuth(url, options = {}) {
 
     return response.json();
 }
-async function register(username, email, password) {
+
+export const register = async (username, email, password) => {
     try {
-        const response = await fetch(
-            "http://localhost:8080/api/user/register",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, email, password }),
-            }
-        );
+        const response = await fetch("http://localhost:3000/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, email, password }),
+        });
+
         const data = await response.json();
-        if (response.ok) {
-            console.log("Enregistrement réussi");
-        } else {
-            console.error("Erreur lors de l'enregistrement:", data.message);
-        }
+        return { data, ok: response.ok };
     } catch (error) {
         console.error("Erreur lors de l'enregistrement:", error);
+        throw new Error(error.message || "Erreur lors de l'enregistrement.");
     }
-}
-async function login(username, password) {
+};
+
+export const login = async (username, password) => {
     try {
-        const response = await fetch("http://localhost:3000/api/user/login", {
+        const response = await fetch("http://localhost:3000/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ username, password }),
         });
+
         const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem("token", data.token);
-            console.log("Connexion réussie");
-        } else {
-            console.error("Erreur lors de la connexion:", data.message);
-        }
+        return { data, ok: response.ok };
     } catch (error) {
         console.error("Erreur lors de la connexion:", error);
+        throw new Error(error.message || "Erreur lors de la connexion.");
     }
-}
-function logout() {
-    localStorage.removeItem("token");
-    console.log("Déconnexion réussie");
-}
-async function updatePassword(oldPassword, newPassword) {
+};
+
+export async function updatePassword(oldPassword, newPassword) {
     try {
         const data = await fetchWithAuth(
-            "http://localhost:3000/api/user/updatePassword",
+            "http://localhost:3000/api/updatePassword",
             {
                 method: "PUT",
                 body: JSON.stringify({ oldPassword, newPassword }),
@@ -82,14 +73,12 @@ async function updatePassword(oldPassword, newPassword) {
         );
     }
 }
-async function getUserInfo() {
+
+export async function getUserInfo() {
     try {
-        const data = await fetchWithAuth(
-            "http://localhost:8080/api/user/users",
-            {
-                method: "GET",
-            }
-        );
+        const data = await fetchWithAuth("http://localhost:3000/api/users", {
+            method: "GET",
+        });
         console.log(
             "Informations de l'utilisateur récupérées avec succès",
             data
@@ -101,4 +90,9 @@ async function getUserInfo() {
             error.message
         );
     }
+}
+
+export function logout() {
+    localStorage.removeItem("token");
+    console.log("Déconnexion réussie");
 }
