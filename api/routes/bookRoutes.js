@@ -1,22 +1,15 @@
 const express = require('express');
 const bookController = require('../controllers/bookController');
+const authenticateToken = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-//GET pour récupérer tous les livres
-router.get('/books', bookController.getAllBooks);
-//GET pour récupérer un livre par ID
-router.get('api/books/:id', bookController.getBookByID);
+router.get('/books', bookController.getBooks); // Route GET pour récupérer tous les livres
+router.get('/books/favorites', authenticateToken, bookController.getBooksFavorites); // Route pour recup les livres favoris
+router.put('/books/:id', bookController.putBooksUpdate); // Route pour mettre à jour un livre
+router.put('/books/status/:id', bookController.putBooksUpdatePage); // Route pour MAJ de la page en cours de lecture
+router.post('/books/addBook', bookController.postBooksAdd); //Route pour ajouter un livre dans la collection
+router.post('/books/addfavorites', authenticateToken ,bookController.postBookAddFavorites); // Route pour ajouter le livre en favori
+router.delete('/books/delete', bookController.deleteBooks); // Route pour supprimer le livre de la liste des favoris :
 
-//GET pour recup livre par filtre
-router.get('/books/filter/:filter/:value', bookController.getBookByFilter); 
-
-//POST pour ajouter un nouveau livre
-router.post('api/addBooks', bookController.addBook);
-//PUT pour modifier l'état du livre
-router.put('api/book/:id', bookController.updateBookState);
-//PUT pour modifier la page en cours de lecture
-router.put('api/book/status/:id', bookController.updateReadingPage);
-
-//POST:ajouter un livre aux favoris
-router.post('/book/:id', bookController.addBookToFavorites);module.exports = router;
+module.exports = router;

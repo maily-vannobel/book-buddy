@@ -2,38 +2,51 @@ import React, { useState, useEffect } from 'react';
 
 function Favorites(){
     const [favoritesBooks, setFavoritesBooks] = useState([]);
+    const token = localStorage.getItem('token'); 
 
     useEffect(() => {
         async function getFavoritesBooks(){
             try{
-                const token = localStorage.getItem('token'); //Affiche les fav de l'utilisateur connecté
-                const response = await fetch ('http://localhost:3000/api/books/favorites', {
+                if (!token) {
+                    throw new Error('No token found');
+                }
+
+                const response = await fetch('http://localhost:3000/api/books/favorites', {
+                    method: 'GET',
                     headers: {
-                        'Authorization': token,
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
                     },
                 });
                 const data = await response.json();
-                console.log(data)
-                setFavoritesBooks(data); //MAJ de l'état avec les données recupérées
+                if (response.ok) {
+                    setFavoritesBooks(data); // MAJ de l'état avec les données recupérées
+                } else {
+                    console.error("Error:", data.message);
+                }
             } catch (error) {
-                console.error("Error", error);
-                setFavoritesBooks([]) //Réinitialise l'état en cas d'erreur 
+                console.error("Error:", error);
+                setFavoritesBooks([]); // Réinitialise l'état en cas d'erreur 
             }
         }
-
+    
         getFavoritesBooks();
-    }, []);
+    }, [token]);
 
     return (
     <div>
         <h1>Mes Favoris</h1>
-        {favoritesBooks.map((book) => (
-            <div key={book._id}>
-                <h3>{book.titre}</h3>
-                <p>{book.auteur}</p>
-                {book.image && <img src={book.image} alt={`${book.titre} cover`} />}
-            </div>
-        ))}
+        {Array.isArray(favoritesBooks) && favoritesBooks.length > 0 ? (
+            favoritesBooks.map((book) => (
+                <div key={book._id}>
+                    <h3>{book.titre}</h3>
+                    <p>{book.auteur}</p>
+                    {book.image && <img src={book.image} alt={`${book.titre} cover`} />}
+                </div>
+            ))
+        ) : (
+            <p>No favorites found</p>
+        )}
     </div>
   );
 }
