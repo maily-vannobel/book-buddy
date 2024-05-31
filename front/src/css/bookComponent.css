@@ -1,0 +1,49 @@
+body {background-color: #FADAC7}
+.book-component {
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin: 16px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.book-title {
+    font-size: 1.5em;
+    margin-bottom: 8px;
+    color : #2F2B3B;
+}
+
+.book-author {
+    color: #555;
+    margin-bottom: 16px;
+}
+
+.book-image {
+    width: 150px; /* Largeur fixe pour toutes les images */
+    height: 200px; /* Hauteur fixe pour toutes les images */
+    object-fit: cover; /* S'assurer que les images remplissent l'espace sans distorsion */
+    margin-bottom: 16px;}
+
+.favorite-button {
+    background-color: #ff002b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.favorite-button:hover {
+    background-color: #b31200;
+}
+
+.modal-title {
+    font-size: 2em;
+    margin-bottom: 16px;
+}
+
+.modal-author,
+.modal-pages {
+    margin-bottom: 16px;
+}

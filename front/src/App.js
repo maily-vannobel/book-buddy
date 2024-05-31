@@ -4,6 +4,10 @@ import Nav from './components/nav';
 import Accueil from './pages/Accueil';
 import Collections from './pages/Collections';
 import Profil from './pages/Profil';
+import BookComponent from './components/BookComponent';
+import BooksList from './components/BooksList';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   return (
@@ -15,6 +19,7 @@ function App() {
         <Route path="/profil" element={<Profil />} />
       </Routes>
     </Router>
+
   );
 }
 
