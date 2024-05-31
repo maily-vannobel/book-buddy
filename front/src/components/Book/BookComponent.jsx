@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 
+
 function BookComponent(){
     const [ modalIsOpen, setModalIsOpen] = useState(false);
     const [books, setBooks] = useState([]);
     const [selectedBook, setSelectedBook] = useState(null);
     const [newEtat, setNewEtat] = useState("");
     const [lastPageRead, setLastPageRead] = useState(0);
+    const token = localStorage.getItem('token');
 
     const openModal = (book) => {
         setSelectedBook(book);
@@ -56,31 +58,46 @@ function BookComponent(){
     };
 
     const handleFavoriteToggle = async (book) =>{
-        const updatedBook = { ...book, favori: !book.favori };
-        try{
-            const response = await fetch (`http://localhost:3000/api/books/${book._id}`, {
-                method: "PUT",
+        const isFavorite = book.favori;
+        const url = isFavorite
+            ? `http://localhost:3000/api/books/delete/${book._id}`
+            : `http://localhost:3000/api/books/addfavorites`;
+
+        const method = isFavorite ? "DELETE" : "POST";
+
+        try {
+            const response = await fetch(url, {
+                method: method,
                 headers: {
+                    "Authorization": "Bearer " + token,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({favori: updatedBook.favori}),
+                body: !isFavorite ? JSON.stringify({ bookId: book._id }) : null,
             });
             if (response.ok) {
                 setBooks((prevBooks) =>
-                    prevBooks.map((b) => (b._id === book._id ? updatedBook : b))
+                    prevBooks.map((b) =>
+                        b._id === book._id ? { ...b, favori: !isFavorite } : b
+                    )
                 );
-            } else{
-                console.error("Failed to update favorite status");
+                console.log(`Book ${isFavorite ? 'removed from' : 'added to'} favorites successfully`);
+            } else {
+                console.error(`Failed to ${isFavorite ? 'remove the book from' : 'add the book to'} favorites`);
             }
-        } catch(error) {
-            console.error("Error updating favorite status", error);
+        } catch (error) {
+            console.error(`Error ${isFavorite ? 'removing the book from' : 'adding the book to'} favorites`, error);
         }
     };
 
     useEffect(() => {
         async function getBooks() {
             try {
-                const response = await fetch(`http://localhost:3000/api/books`);
+                const response = await fetch(`http://localhost:3000/api/books`, {
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "Content-Type": "application/json",
+                    }
+                });
                 const data = await response.json();
 
                 setBooks(data);
@@ -102,7 +119,7 @@ function BookComponent(){
                 <p>{book.auteur}</p>
                 {book.image && <img src={book.image} alt={`${book.titre} cover`} />}
                 <button onClick={(e) => {e.stopPropagation(); handleFavoriteToggle(book)}}>
-                    {book.favori ? "Retirer des favoris" : "Ajouter aux favoris"}
+                    {token && book.favori ? "Retirer des favoris" : "Ajouter aux favoris"}
                 </button>
             </div>
         ))}

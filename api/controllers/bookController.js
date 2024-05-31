@@ -3,12 +3,32 @@ const User = require('../models/userSchema');
 const jwt = require('jsonwebtoken');
 
 exports.getBooks = async (req, res) => {
-    try {
-        const books = await Book.find();
-        res.status(200).json(books);
-    } catch(error) {
-        res.status(500).json({ message: `Erreur lors de la récupération des livres, ${error}` });
-    }
+  const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
+  let userFavorites = [];
+  
+  if (token) {
+      try {
+          const decodedToken = jwt.verify(token, '1234azHgb');
+          const userId = decodedToken.userId;
+          const user = await User.findById(userId);
+          if (user) {
+              userFavorites = user.favorites;
+          }
+      } catch (error) {
+          console.error('Error verifying token:', error);
+      }
+  }
+
+  try {
+      const books = await Book.find();
+      const booksWithFavorites = books.map(book => ({
+          ...book.toObject(),
+          favori: userFavorites.includes(book._id.toString())
+      }));
+      res.status(200).json(booksWithFavorites);
+  } catch (error) {
+      res.status(500).json({ message: `Erreur lors de la récupération des livres, ${error}` });
+  }
 };
 exports.getBooksFavorites = async (req, res) => {
   const token = req.headers.authorization.split(' ')[1]; // Obtenir le token JWT à partir des en-têtes de la requête
@@ -76,7 +96,6 @@ exports.postBookAddFavorites = async (req, res) => {
       const decodedToken = jwt.verify(token, '1234azHgb');
       const userId = decodedToken.userId;
 
-      // Recherche de l'utilisateur dans la base de données
       const user = await User.findById(userId);
 
       if (!user) {
@@ -88,10 +107,8 @@ exports.postBookAddFavorites = async (req, res) => {
         return res.status(400).json({ message: 'Le livre est déjà dans les favoris de l\'utilisateur' });
       }
 
-      // Ajoutez l'ID du livre à la liste des favoris de l'utilisateur
-      user.favorites.push(bookId);
+      user.favorites.push(bookId); // Ajoutez l'ID du livre à la liste des favoris de l'utilisateur
 
-      // Sauvegarder l'utilisateur mis à jour dans la base de données
       const updatedUser = await user.save();
 
       res.status(200).json(updatedUser);
@@ -101,24 +118,25 @@ exports.postBookAddFavorites = async (req, res) => {
     }
 };
 exports.deleteBooks = async (req, res) => {
-    const bookId = req.params.id;
-  
-    try {
-      const book = await Book.findById(bookId);
-  
-      if (!book) {
-        return res.status(404).json({ message: 'Livre non trouvé' });
+  const bookId = req.params.id;
+  const token = req.headers.authorization.split(' ')[1]; // Obtenir le token JWT à partir des en-têtes de la requête
+
+  try {
+      const decodedToken = jwt.verify(token, '1234azHgb');
+      const userId = decodedToken.userId;
+
+      const user = await User.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ message: 'Utilisateur non trouvé' });
       }
-  
-      // Mettre à jour le statut "favori" du livre
-      book.favori = false;
-  
-      // Sauvegarder le livre mis à jour dans la base de données
-      const updatedBook = await book.save();
-  
-      res.status(200).json(updatedBook);
-    } catch (error) {
+
+      user.favorites = user.favorites.filter(favId => favId.toString() !== bookId);  // Supprimer l'ID du livre de la liste des favoris de l'utilisateur
+
+      const updatedUser = await user.save(); 
+      res.status(200).json(updatedUser);
+  } catch (error) {
       console.error('Erreur lors de la suppression du livre des favoris:', error);
       res.status(500).json({ message: 'Erreur serveur lors de la suppression du livre des favoris' });
-    }
+  }
 };
