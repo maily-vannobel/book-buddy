@@ -7,7 +7,8 @@ const bookSchema = new mongoose.Schema({
     status: { type: String, required: true },
     totalPages: { type: Number, required: true },
     currentPage: { type: Number, default: 0 },
-    category: String
+    category: String,
+    resume: String,
 });
 
-module.exports = mongoose.model('Book', bookSchema, 'books');
+module.exports = mongoose.model('Book', bookSchema, 'book');

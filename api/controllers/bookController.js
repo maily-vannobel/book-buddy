@@ -68,13 +68,13 @@ exports.addBook = async (req, res) => {
 exports.updateBookState = async (req, res) => {
     try {
         const { id } = req.params;
-        const { state } = req.body;
+        const { etat } = req.body;
 
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).json({ message: 'ID de livre invalide' });
         }
 
-        const book = await Book.findByIdAndUpdate(id, { state: state }, { new: true });
+        const book = await Book.findByIdAndUpdate(id, { etat: etat }, { new: true });
         if (!book) {
             return res.status(404).json({ message: 'Livre non trouvé' });
         }
@@ -126,5 +126,25 @@ exports.addBookToFavorites = async (req, res) => {
         res.status(200).json({ message: 'Livre ajouté aux favoris', book });
     } catch (error) {
         res.status(500).json({ message: `Erreur lors de l'ajout du livre aux favoris, ${error}` });
+    }
+};
+
+exports.getBooksByCategory = async (req, res) => {
+    try {
+        const { categories } = req.query;
+        const query = {};
+
+        if (categories) {
+            query.category = { $in: categories.split(',') };
+        }
+
+        const books = await Book.find(query);
+        if (books.length === 0) {
+            return res.status(404).json({ message: 'Aucun livre trouvé' });
+        }
+
+        res.status(200).json(books);
+    } catch (error) {
+        res.status(500).json({ message: `Erreur lors de la récupération des livres par catégorie, ${error}` });
     }
 };
