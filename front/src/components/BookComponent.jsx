@@ -39,16 +39,37 @@ function BookComponent({ book, onFavoriteToggle, onUpdateBook }) {
     if (!book) {
         return null;
     }
+    const progressPercentage = (book.pageCourante / book.nombre_de_pages) * 100;
 
     return (
-        <div className="book-component card mb-3" onClick={openModal}>
+        <div className="book-component card mb-3">
             <div className="card-body d-flex flex-column">
-                <h3 className="book-title card-title">{book.titre}</h3>
-                <p className="book-author card-text">{book.auteur}</p>
-                <p className="book-state card-text">État: {book.etat}</p> {/* Affichage de l'état du livre */}
-                {book.image && <img className="book-image card-img-top" src={book.image} alt={`${book.titre} cover`} />}
-                <button className="favorite-button btn btn-primary mt-auto" onClick={(e) => { e.stopPropagation(); onFavoriteToggle(book) }}>
-                    {book.favori ? "Retirer des favoris" : "Ajouter aux favoris"}
+                <div className="cardHeader " onClick={openModal}>
+                    <h2 className="">{book.titre}</h2>
+                    <h3 className="">{book.auteur}</h3>
+                </div>
+                  
+                <div className="book-state-container">
+                    <p className="book-state card-text">État: {book.etat}</p>
+                    {book.etat === "En cours de lecture" && (
+                        <div className="progress-container">
+                            <div className="progress" style={{ height: '10px' }}>
+                                <div 
+                                    className="progress-bar" 
+                                    role="progressbar" 
+                                    style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+                                    aria-valuenow={lastPageRead} 
+                                    aria-valuemin="0" 
+                                    aria-valuemax={book.nombre_de_pages}
+                                >
+                                    {`${progressPercentage.toFixed(2)}%`}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>        
+                {book.image && <img className="book-image card-img-top" src={book.image} alt={`${book.titre} cover`} onClick={openModal} />}                <button className="favorite-button" onClick={(e) => { e.stopPropagation(); onFavoriteToggle(book) }}>
+                    <i className={book.favori ? "bi bi-heart-fill" : "bi bi-heart"}></i>
                 </button>
             </div>
             <Modal 
@@ -58,28 +79,26 @@ function BookComponent({ book, onFavoriteToggle, onUpdateBook }) {
             >
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">{book.titre}</h5>
-                        <button type="button" className="close" onClick={closeModal}>
-                            <span>&times;</span>
-                        </button>
+                        <h1 className="">{book.titre}</h1>
+                        <h2>{book.auteur}</h2>
                     </div>
                     <div className="modal-body">
-                        <p>Auteur: {book.auteur}</p>
+                        <p className="resume">{book.resume}</p>
                         <p>Nombre de pages: {book.nombre_de_pages}</p>
                         <form onSubmit={handleFormSubmit}>
-                            <div className="form-group">
+                            <div className="formGroup">
                                 <div>
-                                <label>État:</label>
-                                <select className="form-control" value={newEtat} onChange={handleEtatChange}>
-                                    <option value="À lire">À lire</option> 
-                                    <option value="En cours de lecture">En cours de lecture</option>
-                                    <option value="Fini">Fini</option>
-                                </select>
+                                    <label>État</label>
+                                    <select className="form-control" value={newEtat} onChange={handleEtatChange}>
+                                        <option value="À lire">À lire</option> 
+                                        <option value="En cours de lecture">En cours de lecture</option>
+                                        <option value="Fini">Fini</option>
+                                    </select>
                                 </div>
                             </div>
                             {newEtat === "En cours de lecture" && (
-                                <div className="form-group">
-                                    <label>Dernière page lue:</label>
+                                <div >
+                                    <label> Dernière page lue:</label>
                                     <input
                                         type="number"
                                         className="form-control"

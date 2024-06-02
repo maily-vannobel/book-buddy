@@ -1,89 +1,84 @@
 import React, { useState, useEffect } from "react";
-import BookComponent from './BookComponent';
+import BookComponent from "./BookComponent";
+import FormCategorie from "./FormCategorie";
 
 function BooksList() {
-    const [books, setBooks] = useState([]);
-
-    useEffect(() => {
-        async function getBooks() {
-            try {
-                const response = await fetch('http://localhost:3001/api/books');
-                const data = await response.json();
-                setBooks(data);
-            } catch (error) {
-                console.error("Error fetching books", error);
-                setBooks([]);
-            }
-        }
-
-        getBooks();
-    }, []);
-
-    const handleFavoriteToggle = async (book) => {
-        const updatedBook = { ...book, favori: !book.favori };
-        try {
-            const response = await fetch(`http://localhost:3001/api/books/${book._id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ favori: updatedBook.favori }),
-            });
-            if (response.ok) {
-                setBooks((prevBooks) =>
-                    prevBooks.map((b) => (b._id === book._id ? updatedBook : b))
-                );
-            } else {
-                console.error("Failed to update favorite status");
-            }
-        } catch (error) {
-            console.error("Error updating favorite status", error);
-        }
+    const categories = {
+      Fantaisie: "Fantaisie",
+      "New Romance": "New Romance",
+      "Dark Romance": "Dark Romance",
+      Dystopie: "Dystopie",
+      "Young Adult": "Young Adult",
     };
+  
+    const [books, setBooks] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState({
+      Fantaisie: false,
+      "New Romance": false,
+      "Dark Romance": false,
+      Dystopie: false,
+      "Young Adult": false,
+    });
+    
+    const [filteredBooks, setFilteredBooks] = useState([]);
 
-    const handleUpdateBook = async (bookId, updates) => {
-        // Vérifier si les mises à jour incluent une nouvelle valeur pour l'état du livre
-        // const newState = updates.etat;
-        // if (newState === undefined || newState === null) {
-        //   console.error("Failed to update the book's state: no new state value provided");
-        //   return;
-        // }
-      
-        try {
-          const response = await fetch(`http://localhost:3001/api/book/${bookId}`, { 
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updates), // Envoyer uniquement la nouvelle valeur d'état à l'API
-          });
-      
-          if (response.ok) {
-            const updatedBook = await response.json();
-            setBooks((prevBooks) =>
-              prevBooks.map((book) =>
-                book._id === bookId ? { ...book, ...updates } : book // Mettre à jour uniquement l'état du livre dans l'état local
-              )
-            );
-          } else {
-            console.error("Failed to update the book's state");
-          }
-        } catch (error) {
-          console.error("Error updating book's state", error);
-        }
-      };
-          return (
-        <div>
-            {books.map(book => (
-                <BookComponent
-                    key={book._id}
-                    book={book}
-                    onFavoriteToggle={handleFavoriteToggle}
-                    onUpdateBook={handleUpdateBook}
-                />
-            ))}
-        </div>
+  useEffect(() => {
+    async function getBooks() {
+      try {
+        const response = await fetch("http://localhost:3001/api/books");
+        const data = await response.json();
+        setBooks(data);
+        setFilteredBooks(data);
+      } catch (error) {
+        console.error("Error fetching books", error);
+        setBooks([]);
+        setFilteredBooks([]);
+      }
+    }
+
+    getBooks();
+  }, []);
+
+  const handleCheckboxChange = (name, checked) => {
+    setSelectedCategories((prevState) => {
+      const updatedCategories = { ...prevState, [name]: checked };
+      filterBooksByCategories(updatedCategories);
+      return updatedCategories;
+    });
+  };
+
+  const filterBooksByCategories = (updatedCategories) => {
+    const selectedCategoryNames = Object.keys(updatedCategories).filter(
+      (name) => updatedCategories[name]
     );
+
+    if (selectedCategoryNames.length === 0) {
+      setFilteredBooks(books);
+      return;
+    }
+
+    const filtered = books.filter((book) =>
+      selectedCategoryNames.includes(book.categorie)
+    );
+
+    setFilteredBooks(filtered);
+  };
+
+  return (    <div className="container">
+      <div className="row">
+        <FormCategorie
+          categories={categories}
+          selectedCategories={selectedCategories}
+          handleCheckboxChange={handleCheckboxChange}
+        />
+        {filteredBooks.map((book) => (
+          <div key={book._id} className="col-md-4 mb-4">
+            <BookComponent book={book} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default BooksList;
