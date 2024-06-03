@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logobook from '../logobook.png';
+import '../css/header-footer.css';
+
 function Nav() {
   return (
     <>
- <nav className="navbar navbar-expand-lg navbar-light bg-light">
+ <nav className="navbar navbar-expand-lg navbar-light">
       <Link className="navbar-brand" to="/">
         <img src={logobook} alt="Book Buddy Logo" width="30" height="30" className="d-inline-block align-top" />
         {' '}

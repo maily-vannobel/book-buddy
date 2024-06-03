@@ -1,4 +1,5 @@
 import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function FormCategorie({ categories, selectedCategories, handleCheckboxChange }) {
   const handleChange = (event) => {
@@ -7,24 +8,29 @@ function FormCategorie({ categories, selectedCategories, handleCheckboxChange })
   };
 
   return (
-    <div className="row mb-3">
-      <div className="col">
+    <div className="dropdown">
+      <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Catégories
+      </button>
+      <ul className="dropdown-menu">
         {Object.entries(categories).map(([name, label]) => (
-          <div className="form-check" key={name}>
-            <input
-              className="form-check-input"
-              type="checkbox"
-              name={name}
-              id={`flexCheck${name}`}
-              checked={selectedCategories[name]}
-              onChange={handleChange}
-            />
-            <label className="form-check-label" htmlFor={`flexCheck${name}`}>
-              {label}
-            </label>
-          </div>
+          <li key={name}>
+            <div className="form-check dropdown-item">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name={name}
+                id={`flexCheck${name}`}
+                checked={selectedCategories[name]}
+                onChange={handleChange}
+              />
+              <label className="form-check-label" htmlFor={`flexCheck${name}`}>
+                {label}
+              </label>
+            </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

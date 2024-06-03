@@ -68,7 +68,8 @@ function BookComponent({ book, onFavoriteToggle, onUpdateBook }) {
                         </div>
                     )}
                 </div>        
-                {book.image && <img className="book-image card-img-top" src={book.image} alt={`${book.titre} cover`} onClick={openModal} />}                <button className="favorite-button" onClick={(e) => { e.stopPropagation(); onFavoriteToggle(book) }}>
+                {book.image && <img className="book-image card-img-top" src={book.image} alt={`${book.titre} cover`} onClick={openModal} />}
+                <button className="favorite-button" onClick={(e) => { e.stopPropagation(); onFavoriteToggle(book) }}>
                     <i className={book.favori ? "bi bi-heart-fill" : "bi bi-heart"}></i>
                 </button>
             </div>
@@ -81,10 +82,15 @@ function BookComponent({ book, onFavoriteToggle, onUpdateBook }) {
                     <div className="modal-header">
                         <h1 className="">{book.titre}</h1>
                         <h2>{book.auteur}</h2>
+                        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body m-2">
+                        <div className="">
+                        <p>Pages <span className="modalText">{book.nombre_de_pages}</span><br/>
+                          Genre <span className="modalText">{book.categorie}</span></p>
+                        </div>
                         <p className="resume">{book.resume}</p>
-                        <p>Nombre de pages: {book.nombre_de_pages}</p>
+
                         <form onSubmit={handleFormSubmit}>
                             <div className="formGroup">
                                 <div>
@@ -121,11 +127,14 @@ function BookComponent({ book, onFavoriteToggle, onUpdateBook }) {
                                     </div>
                                 </div>
                             )}
-                            <button type="submit" className="btn btn-success">Mettre à jour</button>
+                            <div className="d-flex justify-content-between mt-3">
+                                <button type="submit" className="btn btn-success me-2">Mettre à jour</button>
+                                <button type="button" 
+                                        className="btn-close"
+                                        aria-label="Close"
+                                        onClick={closeModal}></button>
+                            </div>
                         </form>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={closeModal}>Fermer</button>
                     </div>
                 </div>
             </Modal>
