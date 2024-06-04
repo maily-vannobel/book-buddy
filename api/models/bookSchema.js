@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const bookSchema = new mongoose.Schema({
     titre: { type: String, required: true },
@@ -9,7 +9,7 @@ const bookSchema = new mongoose.Schema({
     pageCourante: { type: Number, default: 0 },
     resume: String,
     categorie: String,
-    favori: { type: Boolean, default: false }
+    favori: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model('Book', bookSchema, 'book');
+module.exports = mongoose.model("Book", bookSchema, "book");
