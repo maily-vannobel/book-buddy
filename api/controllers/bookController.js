@@ -67,16 +67,18 @@ exports.getBookByFilter = async (req, res) => {
         });
     }
 };
+
+
 // Ajouter un livre
 exports.addBook = async (req, res) => {
-    console.log("Request body:", req.body); // Journaliser le corps de la requête
+    console.log("Request body:", req.body); 
     try {
         const newBook = new Book(req.body);
         const book = await newBook.save();
-        console.log("Book saved:", book); // Journaliser le livre ajouté
+        console.log("Book saved:", book); 
         res.status(201).json(book);
     } catch (error) {
-        console.error("Error adding book:", error); // Journaliser les erreurs
+        console.error("Error adding book:", error);
         res.status(500).json({
             message: `Erreur lors de l'ajout du livre, ${error}`,
         });

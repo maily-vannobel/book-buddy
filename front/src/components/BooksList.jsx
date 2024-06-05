@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import BookComponent from "./BookComponent";
 import FormCategorie from "./FormCategorie";
 
+
 function BooksList() {
     const categories = {
         Action: "Action",
@@ -15,8 +16,8 @@ function BooksList() {
         Psycho: "Psycho",
         "Science Fiction": "Science Fiction",
         Thriller: "Thriller",
-        "Young Adult": "Young Adult",
-    };
+        "Young Adult": "Young Adult"
+    };  
     const [books, setBooks] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState({
         Action: false,
@@ -30,9 +31,9 @@ function BooksList() {
         Psycho: false,
         "Science Fiction": false,
         Thriller: false,
-        "Young Adult": false,
+        "Young Adult": false
     });
-
+    
     const [filteredBooks, setFilteredBooks] = useState([]);
 
     useEffect(() => {
@@ -53,16 +54,16 @@ function BooksList() {
     }, []);
 
     const handleCheckboxChange = (name, checked) => {
-        setSelectedCategories(prevState => {
+        setSelectedCategories((prevState) => {
             const updatedCategories = { ...prevState, [name]: checked };
             filterBooksByCategories(updatedCategories);
             return updatedCategories;
         });
     };
 
-    const filterBooksByCategories = updatedCategories => {
+    const filterBooksByCategories = (updatedCategories) => {
         const selectedCategoryNames = Object.keys(updatedCategories).filter(
-            name => updatedCategories[name]
+            (name) => updatedCategories[name]
         );
 
         if (selectedCategoryNames.length === 0) {
@@ -70,7 +71,7 @@ function BooksList() {
             return;
         }
 
-        const filtered = books.filter(book =>
+        const filtered = books.filter((book) =>
             selectedCategoryNames.includes(book.categorie)
         );
 
@@ -78,16 +79,12 @@ function BooksList() {
     };
 
     const handleUpdateBook = (id, updatedData) => {
-        setBooks(prevBooks =>
-            prevBooks.map(book =>
-                book._id === id ? { ...book, ...updatedData } : book
-            )
-        );
-        setFilteredBooks(prevFilteredBooks =>
-            prevFilteredBooks.map(book =>
-                book._id === id ? { ...book, ...updatedData } : book
-            )
-        );
+        setBooks((prevBooks) => prevBooks.map((book) =>
+            book._id === id ? { ...book, ...updatedData } : book
+        ));
+        setFilteredBooks((prevFilteredBooks) => prevFilteredBooks.map((book) =>
+            book._id === id ? { ...book, ...updatedData } : book
+        ));
     };
 
     return (
@@ -98,14 +95,12 @@ function BooksList() {
                     selectedCategories={selectedCategories}
                     handleCheckboxChange={handleCheckboxChange}
                 />
-                {filteredBooks.map(book => (
+                {filteredBooks.map((book) => (
                     <div key={book._id} className="col-md-4 mb-4">
-                        <BookComponent
-                            book={book}
-                            onUpdateBook={handleUpdateBook}
-                            onFavoriteToggle={() => {
-                                /* Votre logique pour gérer les favoris */
-                            }}
+                        <BookComponent 
+                            book={book} 
+                            onUpdateBook={handleUpdateBook} 
+                            onFavoriteToggle={() => {}} 
                         />
                     </div>
                 ))}

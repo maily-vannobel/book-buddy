@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { login } from "../services/usersFetch";
 import { useNavigate } from "react-router-dom";
+import "../css/loginRegister.css"
 
 function Login() {
     const [username, setUsername] = useState("");
@@ -28,14 +29,15 @@ function Login() {
             console.error("Erreur lors de la connexion:", error);
         }
     };
+
     return (
         <>
-            <div className="center-div">
-                <div className="wrapper">
-                    <form onSubmit={handleLogin}>
-                        <h2>Connexion</h2>
-                        {error && <p className="error">{error}</p>}
-                        <div className="input-field">
+            <div className="bookForm-center-div">
+                <div className="bookForm-wrapper">
+                    <form onSubmit={handleLogin} className="bookForm-form">
+                        <h2 className="bookForm-h2">Connexion</h2>
+                        {error && <p className="bookForm-error">{error}</p>}
+                        <div className="bookForm-input-field">
                             <input
                                 type="text"
                                 required
@@ -44,7 +46,7 @@ function Login() {
                             />
                             <label>Nom d'utilisateur</label>
                         </div>
-                        <div className="input-field">
+                        <div className="bookForm-input-field">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 required
@@ -53,7 +55,7 @@ function Login() {
                             />
                             <label>Mot de passe</label>
                         </div>
-                        <div className="show-password">
+                        <div className="bookForm-show-password">
                             <input
                                 type="checkbox"
                                 checked={showPassword}
@@ -61,8 +63,8 @@ function Login() {
                             />
                             <label>Afficher le mot de passe</label>
                         </div>
-                        <button type="submit">Se connecter</button>
-                        <div className="Login">
+                        <button type="submit" className="bookForm-button">Se connecter</button>
+                        <div className="bookForm-login">
                             <p>
                                 Vous n'avez pas de compte?<br></br>
                                 <a href="http://localhost:3001/register">

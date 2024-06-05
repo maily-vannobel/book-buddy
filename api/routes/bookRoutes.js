@@ -12,8 +12,7 @@ router.put("/book/:id", bookController.updateBookState); //PUT pour modifier l'�
 router.put("/book/status/:id", bookController.updateReadingPage); //PUT pour modifier la page en cours de lecture
 router.post("/book/:id", bookController.addBookToFavorites); //POST:ajouter un livre aux favoris
 router.get("/booksU", bookController.getBooks); // Route GET pour récupérer tous les livres
-router.get(
-    "/books/favorites",
+router.get("/books/favorites",
     authMiddleware,
     bookController.getBooksFavorites
 ); // Route pour recup les livres favoris

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { register, login } from "../services/usersFetch";
 import { useNavigate } from "react-router-dom";
+import "../css/loginRegister.css"
 
 function Register() {
     const [username, setUsername] = useState("");
@@ -56,12 +57,12 @@ function Register() {
 
     return (
         <>
-            <div className="center-div">
-                <div className="wrapper">
-                    <form onSubmit={handleRegister}>
-                        <h2>Inscription</h2>
-                        {error && <p className="error">{error}</p>}
-                        <div className="input-field">
+            <div className="bookForm-center-div">
+                <div className="bookForm-wrapper">
+                    <form onSubmit={handleRegister} className="bookForm-form">
+                        <h2 className="bookForm-h2">Inscription</h2>
+                        {error && <p className="bookForm-error">{error}</p>}
+                        <div className="bookForm-input-field">
                             <input
                                 type="text"
                                 required
@@ -70,7 +71,7 @@ function Register() {
                             />
                             <label>Nom d'utilisateur</label>
                         </div>
-                        <div className="input-field">
+                        <div className="bookForm-input-field">
                             <input
                                 type="email"
                                 required
@@ -79,7 +80,7 @@ function Register() {
                             />
                             <label>Email</label>
                         </div>
-                        <div className="input-field">
+                        <div className="bookForm-input-field">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 required
@@ -88,7 +89,7 @@ function Register() {
                             />
                             <label>Mot de passe</label>
                         </div>
-                        <div className="showPassword">
+                        <div className="bookForm-show-password">
                             <input
                                 type="checkbox"
                                 checked={showPassword}
@@ -96,8 +97,8 @@ function Register() {
                             />
                             <label>Afficher le mot de passe</label>
                         </div>
-                        <button type="submit">Créer mon compte</button>
-                        <div className="register">
+                        <button type="submit" className="bookForm-button">Créer mon compte</button>
+                        <div className="bookForm-register">
                             <p>
                                 Vous avez déjà un compte?<br></br>
                                 <a href="http://localhost:3001/login">
