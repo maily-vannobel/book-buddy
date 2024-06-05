@@ -24,10 +24,10 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/login" element={<LoginPage />} />
 
-                    <Route
-                        path="/updatePassword"
-                        element={<SettingsAccountModal />}
-                    />
+                        <Route path="/updatePassword"
+                            element={<SettingsAccountModal />}
+                        />
+
                 </Routes>
             </main>
             <Footer />
@@ -36,3 +36,4 @@ function App() {
 }
 
 export default App;
+

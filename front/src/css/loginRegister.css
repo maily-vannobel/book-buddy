@@ -107,6 +107,11 @@
     color: #fff;
 }
 
+.bookForm-register a {color: white}
+.bookForm-register a:hover {color: rgb(201, 201, 201)}
+.bookForm-login a {color: white}
+.bookForm-login a:hover {color: rgb(201, 201, 201)}
+
 .bookForm-login {
     text-align: center;
     margin-top: 30px;
